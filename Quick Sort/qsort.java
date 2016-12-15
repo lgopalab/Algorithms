@@ -1,0 +1,218 @@
+/*	
+	Author : Laxman Sai Karthik Mahidhar Gopalabhatla
+	Email id : lgopalab@uncc.edu
+	
+	The below Quick sort algorithm has been implemented using JAVA platform with JDK 1.8.0_65.
+	
+	The programs starts execution and checks if the filename was passed as a command line argument (Note: Multiple files can also be passed). If the argument is not passed the program exits displaying an error message. If the filename is passed then the program fetches the file name from first command line argument. This file name is used to fetch the file from the same directory as the program file is in. After fetching the file is iterated line by line and the following checks are performed.
+	1.	See if the line is starting with a semicolon. If yes remove it.
+	2.	Removing all the spaces in the line
+
+	After the above checks the line is split using semicolon as delimiter and placed in a String array. These numbers are then parsed into float numbers and stored in Array of type float. This Array is then passed to the quicksort function which follows the following algorithm and the output of this is saved into a file named output{filenumber}.txt. Although We are supposed to save the output in a single file, As the file size is of the output file is going to be huge, This program saves different output files for different input files for efficient processing.
+	
+
+	Quick sort follows in-place divide and conquer method. First the middle element of the array is selected as the pivot element and array is split into two sub-arrays and then sorted recursively.
+
+	The steps included are:
+	•	Selection of Pivot element i.e. usually the middle term of the array.
+	•	Array is then reordered such that all elements that are less than pivot element are towards the left of pivot and the elements greater than pivot are on right of the pivot element. 
+	•	If any equal values are found, then can be put into left array or right array.
+	•	The array is then split into two sub arrays leaving the pivot element and the above steps are applied recursively left sub-array of elements with smaller values and to the sub-array of elements with greater values separately.
+
+	Data Structure Design
+	Array has been used as the data structure for this program as it allows us to easily work with the index values in java.
+
+	Performance Analysis
+	The program calculates the time taken to sort the numbers in files of different sizes in order to analyze the performance which can be tabulated as follows.
+
+	Size	Sorting Time(in milliseconds)
+	100		0
+	1000	1
+	10000	1
+	50000	7
+	100000	12
+	1000000	122
+
+
+	The program works in following conditions
+	1.	If the line is starting with a semicolon
+	2.	If the line has a single element with no semicolon
+	3.	If the lines have spaces
+	The program fails if there is other delimiter used in the input file.
+
+	Process to run the program
+	1.	The file that is being used as input has to be in the same folder as the program file.
+	2.	Then run the following commands
+		a.	Javac qsort.java 
+		b.	Java qsort inputfilename1here inputfilename2here …. 
+
+*/
+
+import java.util.*;
+import java.io.*;
+import java.lang.*;
+
+public class qsort
+{ 
+    public static void OutputFile(float[] OutputList,long duration,int filenumber) throws IOException 
+	{
+			String output = ""; //This variable is used in saving the output to file
+			
+			
+			//creating a string with the numbers in OutputList
+			for (Float s : OutputList)
+			{
+				output += s + ";";
+			}
+			
+			//removing trailing semicolon
+			output = output.substring(0,output.length()-1);
+			
+			//Printing Output
+			//System.out.println(output);
+			
+			//Creating new file
+			File outputFile = new File ("output"+filenumber+".txt");
+			FileWriter fileWriter = new FileWriter (outputFile);
+			BufferedWriter bw = new BufferedWriter(fileWriter);
+	
+			bw.write("Performance Analysis:");
+			bw.newLine();
+			bw.write("Size		Sorting Time(in milliseconds)");
+			bw.newLine();
+			bw.write(OutputList.length+"				"+duration);
+			bw.newLine();
+			bw.newLine();
+			bw.write("Numbers in Sorted Order \n");
+			bw.write(output);
+			bw.flush();						
+			bw.close();						
+			System.out.println("Output stored in output"+filenumber+".txt");
+	}
+	 
+	public static void quicksort( float arr[], int start, int end)
+	{
+		int i = partition(arr, start , end );//Partition the array first
+		if( start < i-1)
+		{
+		   quicksort(arr, start , i-1);//Recursively call left array
+		}
+		if( i < end)
+		{
+		   quicksort(arr,i,end);//Recurrsively call right array
+		}
+	}
+ 
+	 public static int partition( float arr[] , int left , int right)
+	 {
+		int i = left, j = right;
+		float temp;
+		float pivot = arr[(left + right) / 2];// Selecting middle element as pivot
+	   
+		while (i <= j) 
+		{
+		   while (arr[i] < pivot)
+			  i++;
+		   while (arr[j] > pivot)
+			  j--;
+		   if (i <= j) 
+		   {
+			  temp = arr[i];
+			  arr[i] = arr[j];
+			  arr[j] = temp;
+			  i++;
+			  j--;
+		   }
+		}   
+		return i;
+	 }     
+	 
+	 public static void main(String[] args) throws Exception
+     {
+		if(args.length == 0)
+		{
+			System.out.println("Enter a File name");
+			System.exit(0);
+		}
+		else
+		{
+			for(int filenumber=0;filenumber<args.length;filenumber++)
+			{
+				long time1,time2;
+				int linecount = 0;
+				String filename = args[filenumber]; // getting the filename from commandline arguments
+				
+				String Path = System.getProperty("user.dir") + "/" + filename;//Getting file path here
+				
+				BufferedReader inputStream = null;			
+				
+				inputStream = new BufferedReader(new FileReader(Path));//Building an input stream with file contents
+				
+				String line = null;//Used for line by line processing
+				String fulltext = null;//Used for line by line processing
+				
+				String[] NumbersInLine = null;//used for getting numbers from each line					
+					
+				try
+				{					
+					// The following loop iterate line by line if in case of a multiline input.
+					while ((line = inputStream.readLine()) != null) 
+					{	
+						// This line checks if a line starts with semicolon and if found semicolon is removed.
+						if(line.substring(0, 1).equals(";"))
+						{
+							line = line.substring(1);						
+						}
+						
+						if(!line.substring(line.length() - 1).equals(";"))
+						{
+							line = line+";";						
+						}
+						
+						//This line removes all the spaces in the current read line
+						line = line.replaceAll("\\s","");
+						
+						fulltext = fulltext + line;
+						
+					}
+					
+					if(fulltext.substring(fulltext.length() - 1).equals(";"))
+					{
+						fulltext = fulltext.substring(0, fulltext.length() - 2);				
+					}
+					
+					fulltext = fulltext.replaceAll("null","");
+					
+					NumbersInLine = fulltext.split(";");					
+					
+					float[] Inputlist = new float[NumbersInLine.length];
+
+					//Store the Input Number into a ArrayList
+					for(int i=0; i<NumbersInLine.length;i++)
+					{
+						Inputlist[i] =Float.parseFloat(NumbersInLine[i]);
+					}
+					
+					
+					
+					//Calling the insertion sort algorithm by passing the Integer ArrayList and saving the result in OutputList
+					time1 = System.currentTimeMillis();
+					
+					quicksort(Inputlist,0,Inputlist.length -1);
+					
+					time2 = System.currentTimeMillis();
+					
+					OutputFile(Inputlist,time2-time1,filenumber+1);
+					
+					
+				}
+				finally
+				{
+					if (inputStream != null)
+						inputStream.close();
+					
+				}			
+			}			
+		}     
+	}
+}	

@@ -1,0 +1,19 @@
+Performance Analysis:
+Size		Sorting Time(in milliseconds)
+50000				7
+
+Performance Analysis:
+Size		Sorting Time(in milliseconds)
+100				0
+
+Performance Analysis:
+Size		Sorting Time(in milliseconds)
+1000				1
+
+Performance Analysis:
+Size		Sorting Time(in milliseconds)
+10000				1
+
+Performance Analysis:
+Size		Sorting Time(in milliseconds)
+100000				12
